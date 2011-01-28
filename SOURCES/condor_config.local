@@ -1,0 +1,467 @@
+############################################################
+## Security config
+############################################################
+
+############################
+# Authentication settings
+############################
+SEC_DEFAULT_AUTHENTICATION = REQUIRED
+SEC_DEFAULT_AUTHENTICATION_METHODS = FS
+SEC_READ_AUTHENTICATION = OPTIONAL
+SEC_CLIENT_AUTHENTICATION = OPTIONAL
+
+############################
+# Privacy settings
+############################
+SEC_DEFAULT_ENCRYPTION = OPTIONAL
+SEC_DEFAULT_INTEGRITY = REQUIRED
+SEC_READ_INTEGRITY = OPTIONAL
+SEC_CLIENT_INTEGRITY = OPTIONAL
+SEC_READ_ENCRYPTION = OPTIONAL
+SEC_CLIENT_ENCRYPTION = OPTIONAL
+
+##  Without strong security, the only secure connection is the local one
+HOSTALLOW_WRITE = $(FULL_HOSTNAME)
+
+############################################################
+## GSI Security config
+############################################################
+
+############################
+# Authentication settings
+############################
+SEC_DEFAULT_AUTHENTICATION_METHODS = FS,GSI
+DENY_WRITE = anonymous@*
+DENY_ADMINISTRATOR = anonymous@*
+DENY_DAEMON = anonymous@*
+DENY_NEGOTIATOR = anonymous@*
+
+# Grid Certificate directory EDIT THIS
+GSI_DAEMON_TRUSTED_CA_DIR=/etc/grid-security/certificates
+
+############################
+# Set daemon cert location
+############################
+GSI_DAEMON_DIRECTORY = /etc/grid-security
+
+############################
+# Credentials
+############################
+#GSI_DAEMON_PROXY = /tmp/x509up_u1349
+
+# EDIT THESE VALUES
+# If you ever decide to use a Certificate, see below
+GSI_DAEMON_CERT = /etc/grid-security/glideincert.pem
+GSI_DAEMON_KEY  = /etc/grid-security/glideinkey.pem
+
+#################################
+# Where to find ID->uid mappings EDIT THIS
+#################################
+CERTIFICATE_MAPFILE=/opt/glidecondor/certs/condor_mapfile
+
+#####################################
+# Add whitelist of condor daemon DNs EDIT THIS
+#####################################
+GSI_DAEMON_NAME=/DC=org/DC=doegrids/OU=People/CN=Derek Weitzel 285345,/DC=org/DC=doegrids/OU=People/CN=Derek Weitzel 285345/CN=993078166,/DC=org/DC=doegrids/OU=Services/CN=host/glidein.unl.edu,/DC=org/DC=doegrids/OU=Services/CN=glidein-1.t2.ucsd.edu,/DC=org/DC=doegrids/OU=People/CN=Ian Stokes-Rees 411174,/DC=org/DC=doegrids/OU=Services/CN=host/cpass.unl.edu
+
+#####################################
+# Limit session caching to ~12h
+#####################################
+# Brian (01/25/2010).  Unset at Dan Bradley's request.
+#SEC_DEFAULT_SESSION_DURATION = 50000
+
+#####################################################
+# With strong security, do not use IP based controls
+#####################################################
+HOSTALLOW_WRITE = *
+
+##########################################################
+# Prepare the Shadow for use with glexec-enabled glideins
+##########################################################
+SHADOW.GLEXEC_STARTER = True
+SHADOW.GLEXEC = /bin/false
+
+
+######################################################
+## This is a Collector machine, limit deamons
+######################################################
+DAEMON_LIST   = MASTER, COLLECTOR, NEGOTIATOR
+COLLECTOR_NAME = GlideinWMS Frontend
+COLLECTOR_HOST  = $(CONDOR_HOST):9618
+
+############################################################
+## Negotiator tuning
+############################################################
+# Prefer newer claims as they are more likely to be alive
+NEGOTIATOR_POST_JOB_RANK = MY.LastHeardFrom
+# Increase negotiation frequency, as new glideins do not trigger a reschedule 
+NEGOTIATOR_INTERVAL = 60
+NEGOTIATOR_MAX_TIME_PER_SUBMITTER=40
+NEGOTIATOR_MAX_TIME_PER_PIESPIN=20
+# Prevent preemption
+PREEMPTION_REQUIREMENTS = False
+# negotiator/GCB optimization
+NEGOTIATOR_INFORM_STARTD = False
+MAXJOBRETIREMENTTIME = 30
+# Causes Negotiator to run faster. PREEMPTION_REQUIREMENTS and all condor_startd rank expressions must be False for NEGOTIATOR_CONSIDER_PREEMPTION to be False
+NEGOTIATOR_CONSIDER_PREEMPTION = False
+
+################################################
+## Secondary collectors
+################################################
+
+# Define sub-collectors, their ports and their log files
+COLLECTOR0 = $(COLLECTOR)
+COLLECTOR0_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector0Log"
+COLLECTOR0_ARGS = -f -p 9620
+
+COLLECTOR1 = $(COLLECTOR)
+COLLECTOR1_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector1Log"
+COLLECTOR1_ARGS = -f -p 9621
+
+COLLECTOR2 = $(COLLECTOR)
+COLLECTOR2_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector2Log"
+COLLECTOR2_ARGS = -f -p 9622
+
+COLLECTOR3 = $(COLLECTOR)
+COLLECTOR3_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector3Log"
+COLLECTOR3_ARGS = -f -p 9623
+
+COLLECTOR4 = $(COLLECTOR)
+COLLECTOR4_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector4Log"
+COLLECTOR4_ARGS = -f -p 9624
+
+COLLECTOR5 = $(COLLECTOR)
+COLLECTOR5_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector5Log"
+COLLECTOR5_ARGS = -f -p 9625
+
+COLLECTOR6 = $(COLLECTOR)
+COLLECTOR6_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector6Log"
+COLLECTOR6_ARGS = -f -p 9626
+
+COLLECTOR7 = $(COLLECTOR)
+COLLECTOR7_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector7Log"
+COLLECTOR7_ARGS = -f -p 9627
+
+COLLECTOR8 = $(COLLECTOR)
+COLLECTOR8_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector8Log"
+COLLECTOR8_ARGS = -f -p 9628
+
+COLLECTOR9 = $(COLLECTOR)
+COLLECTOR9_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector9Log"
+COLLECTOR9_ARGS = -f -p 9629
+
+COLLECTOR10 = $(COLLECTOR)
+COLLECTOR10_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector10Log"
+COLLECTOR10_ARGS = -f -p 9630
+
+
+
+
+# Add subcollectors to the list of things to start
+DAEMON_LIST = $(DAEMON_LIST) \
+COLLECTOR0 \
+COLLECTOR1 \
+COLLECTOR2 \
+COLLECTOR3 \
+COLLECTOR4 \
+COLLECTOR5 \
+COLLECTOR6 \
+COLLECTOR7 \
+COLLECTOR8 \
+COLLECTOR9 \
+COLLECTOR10 \
+
+# forward ads to the main collector
+# (this is ignored by the main collector, since the address matches itself)
+CONDOR_VIEW_HOST = $(COLLECTOR_HOST)
+
+#####################################
+# Enable match authentication
+#####################################
+SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION=TRUE
+######################################################
+## This is both a Collector and a Schedd machine
+######################################################
+DAEMON_LIST   = $(DAEMON_LIST) SCHEDD
+
+
+######################################################
+## Schedd tuning
+######################################################
+
+# Allow up to 6k concurrent running jobs
+MAX_JOBS_RUNNING        = 10000
+# Start max of 50 jobs every 2 seconds
+JOB_START_DELAY = 2
+JOB_START_COUNT = 50
+# Stop 30 jobs every seconds
+# This is needed to prevent glexec overload, when used
+# Works for Condor v7.3.1 and up only, but harmless for older versions
+JOB_STOP_DELAY = 1
+JOB_STOP_COUNT = 30
+
+# Raise file transfer limits
+# no upload limits, since JOB_START_DELAY limits that
+MAX_CONCURRENT_UPLOADS = 100
+# but do limit downloads, as they are asyncronous
+MAX_CONCURRENT_DOWNLOADS = 100
+
+# Prevent checking on ImageSize
+APPEND_REQ_VANILLA = (Memory>=1)
+
+# Prevent preemption
+#MAXJOBRETIREMENTTIME = $(HOUR) * 24 * 7
+
+#GCB optimization
+SCHEDD_SEND_VACATE_VIA_TCP = True
+STARTD_SENDS_ALIVES = True
+
+
+# Specify that you only want the master and the broker running
+#DAEMON_LIST = MASTER, GCB_BROKER
+#DAEMON_LIST = $(DAEMON_LIST), GCB_BROKER
+
+# Define the path to the broker binary for the master to spawn
+GCB_BROKER = $(RELEASE_DIR)/libexec/gcb_broker
+
+# Define the path to the release_server binary for the broker to use 
+GCB_RELAY = $(RELEASE_DIR)/libexec/gcb_relay_server
+
+# Setup the gcb_broker's environment.  We use a macro to build up the
+# environment we want in pieces, and then finally define
+# GCB_BROKER_ENVIRONMENT, the setting that condor_master uses.
+
+# Initialize an empty macro
+GCB_BROKER_ENV =
+
+# (recommended) Provide the full path to the gcb_relay_server
+GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_RELAY_SERVER=$(GCB_RELAY)
+
+# (recommended) Tell GCB to write all log files into the Condor log
+# directory (the directory used by the condor_master itself)
+GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_LOG_DIR=$(LOG)
+# Or, you can specify a log file separately for each GCB daemon:
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_BROKER_LOG=$(LOG)/GCB_Broker_Log
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_RELAY_SERVER_LOG=$(LOG)/GCB_RS_Log
+
+GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_DEBUG_LEVEL=fulldebug
+
+# (optional -- only set if true) Tell the GCB broker that it can
+# directly connect to machines in the private network which it is
+# handling communication for.  This should only be enabled if the GCB
+# broker is running directly on a network boundary and can open direct
+# connections to the private nodes.
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_ACTIVE_TO_CLIENT=yes
+
+# (optional) turn on verbose logging for all of GCB
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_DEBUG_LEVEL=fulldebug
+# Or, you can turn this on separately for each GCB daemon:
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_BROKER_DEBUG=fulldebug
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_RELAY_SERVER_DEBUG=fulldebug
+
+# (optional) specify the maximum log file size (in bytes)
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_MAX_LOG=640000
+# Or, you can define this separately for each GCB daemon:
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_BROKER_MAX_LOG=640000
+#GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_RELAY_SERVER_MAX_LOG=640000
+
+# How many connections should it serve
+GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_MAX_RELAY_SERVERS=200
+GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_MAX_CLIENTS_PER_RELAY_SERVER=100
+
+# How tolerant should it be to blocked connections
+GCB_BROKER_ENV = $(GCB_BROKER_ENV);GCB_COMMAND_TIMEOUT=1.5
+
+# Finally, set the value the condor_master really uses
+GCB_BROKER_ENVIRONMENT = $(GCB_BROKER_ENV)
+
+# If your Condor installation on this host already has a public
+# interface as the default (either because it is the first interface
+# listed in this machine's host entry, or because you've already
+# defined NETWORK_INTERFACE), you can just use Condor's special macro
+# that holds the IP address for this.
+GCB_BROKER_IP = $(ip_address)
+# Otherwise, you could define it yourself with your real public IP:
+# GCB_BROKER_IP = 123.123.123.123
+
+# (required) define the command-line arguments for the broker 
+GCB_BROKER_ARGS = -i $(GCB_BROKER_IP)
+
+#####################################
+# Tell schedd daemons where is GCB
+#####################################
+#SCHEDD.NET_REMAP_ENABLE=TRUE
+#SCHEDD.NET_REMAP_SERVICE=GCB
+#SCHEDD.NET_REMAP_ROUTE=/opt/glidecondor/etc/gcb-routing-table
+#SCHEDD.NET_REMAP_INAGENT=$(GCB_BROKER_IP)
+
+
+# Added by Derek
+# Removed by Brian on advice from Igor
+#SEC_TOOL_SESSION_DURATION = 60
+
+# Added by Brian for Gratia support
+#PER_JOB_HISTORY_DIR = /opt/vdt/gratia/var/data
+
+# Added by Derek for logging (in bytes)
+#MAX_COLLECTOR_LOG = 100000000
+MAX_SHADOW_LOG = 100000000
+
+# Added by Brian 01/28/2010 at Igor's request.
+SEC_DAEMON_SESSION_DURATION=50000
+
+# Added by Derek to stop the crashing
+#MAX_FILE_DESCRIPTORS = 16384
+COLLECTOR_MAX_FILE_DESCRIPTORS=20000
+
+# Added to stop memory leak
+#USE_VOMS_ATTRIBUTES = False
+COLLECTOR.USE_VOMS_ATTRIBUTES = False 
+
+# Added to attempt to fix the dead condor_shadow problem.
+ENABLE_URL_TRANSFERS=TRUE
+FILETRANSFER_PLUGINS = /foo/bar
+
+# Avoid scheduling at any slot that has been silent for a suspiciously long time.
+#APPEND_REQUIREMENTS=(CurrentTime-LastHeardFrom)<600
+
+PeriodicHold = (ImageSize > 2048000)
+#JOBGLIDEIN_Site="$$([TARGET.GLIDEIN_Site])"
+JOBGLIDEIN_Site='$$([IfThenElse(IsUndefined(TARGET.GLIDEIN_Site), "Local Job", TARGET.GLIDEIN_Site)])'
+#SUBMIT_EXPRS = $(SUBMIT_EXPRS) X509USERPROXY PeriodicHold JOBGLIDEIN_Site
+# Removed x509 requirement - Derek
+SUBMIT_EXPRS = $(SUBMIT_EXPRS) PeriodicHold JOBGLIDEIN_Site
+
+SYSTEM_PERIODIC_HOLD = (JobStatus == 2) && (ImageSize > 3048000)
+
+# Write all Condor Events to a log file.
+EVENT_LOG=$(LOG)/EventLog
+#EVENT_LOG_USE_XML=True
+EVENT_LOG_JOB_AD_INFORMATION_ATTRS=Owner,CurrentHosts,x509userproxysubject,AccountingGroup,GlobalJobId,QDate,JobStartDate,JobCurrentStartDate,JobFinishedHookDone,MATCH_EXP_JOBGLIDEIN_Site,RemoteHost
+
+# Added to hurry job buildup - Derek
+NEGOTIATOR_MAX_TIME_PER_PIESPIN = 60
+NEGOTIATOR_MAX_TIME_PER_SUBMITTER = 60
+
+# Add a whole bunch of collectors
+COLLECTOR11 = $(COLLECTOR)
+COLLECTOR11_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector11Log"
+COLLECTOR11_ARGS = -f -p 9631
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR11
+COLLECTOR12 = $(COLLECTOR)
+COLLECTOR12_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector12Log"
+COLLECTOR12_ARGS = -f -p 9632
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR12
+COLLECTOR13 = $(COLLECTOR)
+COLLECTOR13_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector13Log"
+COLLECTOR13_ARGS = -f -p 9633
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR13
+COLLECTOR14 = $(COLLECTOR)
+COLLECTOR14_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector14Log"
+COLLECTOR14_ARGS = -f -p 9634
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR14
+COLLECTOR15 = $(COLLECTOR)
+COLLECTOR15_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector15Log"
+COLLECTOR15_ARGS = -f -p 9635
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR15
+COLLECTOR16 = $(COLLECTOR)
+COLLECTOR16_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector16Log"
+COLLECTOR16_ARGS = -f -p 9636
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR16
+COLLECTOR17 = $(COLLECTOR)
+COLLECTOR17_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector17Log"
+COLLECTOR17_ARGS = -f -p 9637
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR17
+COLLECTOR18 = $(COLLECTOR)
+COLLECTOR18_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector18Log"
+COLLECTOR18_ARGS = -f -p 9638
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR18
+COLLECTOR19 = $(COLLECTOR)
+COLLECTOR19_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector19Log"
+COLLECTOR19_ARGS = -f -p 9639
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR19
+COLLECTOR20 = $(COLLECTOR)
+COLLECTOR20_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector20Log"
+COLLECTOR20_ARGS = -f -p 9640
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR20
+COLLECTOR21 = $(COLLECTOR)
+COLLECTOR21_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector21Log"
+COLLECTOR21_ARGS = -f -p 9641
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR21
+COLLECTOR22 = $(COLLECTOR)
+COLLECTOR22_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector22Log"
+COLLECTOR22_ARGS = -f -p 9642
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR22
+COLLECTOR23 = $(COLLECTOR)
+COLLECTOR23_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector23Log"
+COLLECTOR23_ARGS = -f -p 9643
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR23
+COLLECTOR24 = $(COLLECTOR)
+COLLECTOR24_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector24Log"
+COLLECTOR24_ARGS = -f -p 9644
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR24
+COLLECTOR25 = $(COLLECTOR)
+COLLECTOR25_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector25Log"
+COLLECTOR25_ARGS = -f -p 9645
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR25
+COLLECTOR26 = $(COLLECTOR)
+COLLECTOR26_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector26Log"
+COLLECTOR26_ARGS = -f -p 9646
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR26
+COLLECTOR27 = $(COLLECTOR)
+COLLECTOR27_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector27Log"
+COLLECTOR27_ARGS = -f -p 9647
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR27
+COLLECTOR28 = $(COLLECTOR)
+COLLECTOR28_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector28Log"
+COLLECTOR28_ARGS = -f -p 9648
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR28
+COLLECTOR29 = $(COLLECTOR)
+COLLECTOR29_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector29Log"
+COLLECTOR29_ARGS = -f -p 9649
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR29
+COLLECTOR30 = $(COLLECTOR)
+COLLECTOR30_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector30Log"
+COLLECTOR30_ARGS = -f -p 9650
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR30
+COLLECTOR31 = $(COLLECTOR)
+COLLECTOR31_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector31Log"
+COLLECTOR31_ARGS = -f -p 9651
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR31
+COLLECTOR32 = $(COLLECTOR)
+COLLECTOR32_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector32Log"
+COLLECTOR32_ARGS = -f -p 9652
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR32
+COLLECTOR33 = $(COLLECTOR)
+COLLECTOR33_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector33Log"
+COLLECTOR33_ARGS = -f -p 9653
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR33
+COLLECTOR34 = $(COLLECTOR)
+COLLECTOR34_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector34Log"
+COLLECTOR34_ARGS = -f -p 9654
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR34
+COLLECTOR35 = $(COLLECTOR)
+COLLECTOR35_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector35Log"
+COLLECTOR35_ARGS = -f -p 9655
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR35
+COLLECTOR36 = $(COLLECTOR)
+COLLECTOR36_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector36Log"
+COLLECTOR36_ARGS = -f -p 9656
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR36
+COLLECTOR37 = $(COLLECTOR)
+COLLECTOR37_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector37Log"
+COLLECTOR37_ARGS = -f -p 9657
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR37
+COLLECTOR38 = $(COLLECTOR)
+COLLECTOR38_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector38Log"
+COLLECTOR38_ARGS = -f -p 9658
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR38
+COLLECTOR39 = $(COLLECTOR)
+COLLECTOR39_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector39Log"
+COLLECTOR39_ARGS = -f -p 9659
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR39
+COLLECTOR40 = $(COLLECTOR)
+COLLECTOR40_ENVIRONMENT = "_CONDOR_COLLECTOR_LOG=$(LOG)/Collector40Log"
+COLLECTOR40_ARGS = -f -p 9660
+DAEMON_LIST=$(DAEMON_LIST), COLLECTOR40

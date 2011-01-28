@@ -1,0 +1,20 @@
+--- creation/reconfig_frontend.orig	2010-06-10 09:31:22.000000000 -0500
++++ creation/reconfig_frontend	2010-06-10 09:31:38.000000000 -0500
+@@ -28,17 +28,10 @@
+ ################################################################################
+ 
+ def main(params,old_params):
+-    # load old files
+-    old_frontend_dicts_obj=cvWParamDict.frontendDicts(old_params)
+-    old_frontend_dicts_obj.load()
+-
+     # create dictionaries for new params
+     frontend_dicts_obj=cvWParamDict.frontendDicts(params)
+     frontend_dicts_obj.populate()
+ 
+-    # merge them together
+-    frontend_dicts_obj.reuse(old_frontend_dicts_obj)
+-
+     # write to disk
+     frontend_dicts_obj.save()
+     frontend_dicts_obj.set_readonly(True)
