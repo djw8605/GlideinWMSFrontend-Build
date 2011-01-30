@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.0
-Release:        3
+Release:        4
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -145,6 +145,11 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSF
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d
 install -m 0644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d/gwms-frontend.conf
 
+# Install tools
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools/lib
+cp tools/*.py $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools/
+cp tools/lib/*.py $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools/lib
 
 %post
 # $1 = 1 - Installation
@@ -193,6 +198,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 24 2011 Derek Weitzel  2.5.0-4
+- Added the tools directory to the release
+
 * Mon Jan 24 2011 Derek Weitzel  2.5.0-3
 - Rebased to official 2.5.0 release.
 
