@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.0
-Release:        4
+Release:        5
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -146,10 +146,13 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d
 install -m 0644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d/gwms-frontend.conf
 
 # Install tools
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools/lib
-cp tools/*.py $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools/
-cp tools/lib/*.py $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools/lib
+install -d $RPM_BUILD_ROOT%{_bindir}
+# Install the tools as the non-*.py filenames
+for file in `ls tools/*.py`; do
+   newname=`echo $file | sed -e 's/.*\/\(.*\)\.py/\1/'`
+   cp $file $RPM_BUILD_ROOT%{_bindir}/$newname
+done
+cp tools/lib/*.py $RPM_BUILD_ROOT%{_libdir}/python%{py_ver}/site-packages
 
 %post
 # $1 = 1 - Installation
@@ -160,6 +163,7 @@ cp tools/lib/*.py $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/tools/lib
 ln -s %{_sysconfdir}/gwms-frontend/frontend.xml %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/frontend.xml
 ln -s %{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/monitor
 ln -s %{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/group_main %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/group_main/monitor
+
 
 %preun
 # $1 = 0 - Action is uninstall
@@ -187,6 +191,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,nobody,nobody,-)
+%attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %attr(-, nobody, nobody) %{_datadir}/gwms-frontend
 %attr(-, nobody, nobody) %{_localstatedir}/log/gwms-frontend
@@ -198,6 +203,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 09 2011 Derek Weitzel  2.5.0-5
+- Added the tools to bin directory
+
 * Mon Jan 24 2011 Derek Weitzel  2.5.0-4
 - Added the tools directory to the release
 
