@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.0
-Release:        5
+Release:        6
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -43,7 +43,7 @@ Requires(post): /sbin/chkconfig
 
 
 %description
-
+The purpose of the glideinWMS is to provide a simple way to access the Grid resources. GlideinWMS is a Glidein Based WMS (Workload Management System) that works on top of Condor. For those familiar with the Condor system, it is used for scheduling and job control. 
 
 
 
@@ -61,7 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 # Set the Python version
 %define py_ver %(python -c "import sys; v=sys.version_info[:2]; print '%d.%d'%v")
 
-# From http://fedoraproject.org/wiki/Packaging:Python#Files_to_include
+# From http://fedoraproject.org/wiki/Packaging:Python
 # Define python_sitelib
 %if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
@@ -86,10 +86,10 @@ install -m 0500 creation/reconfig_frontend $RPM_BUILD_ROOT%{_sbindir}/reconfig_f
 # install the library parts
 # FIXME: Need to find macro for site-packages
 # FIXME: Need to create a subdirectory for vofrontend python files
-install -d $RPM_BUILD_ROOT%{_libdir}/python%{py_ver}/site-packages
-cp lib/*.py $RPM_BUILD_ROOT%{_libdir}/python%{py_ver}/site-packages
-cp frontend/*.py $RPM_BUILD_ROOT%{_libdir}/python%{py_ver}/site-packages
-cp creation/lib/*.py $RPM_BUILD_ROOT%{_libdir}/python%{py_ver}/site-packages
+install -d $RPM_BUILD_ROOT%{python_sitelib}
+cp lib/*.py $RPM_BUILD_ROOT%{python_sitelib}
+cp frontend/*.py $RPM_BUILD_ROOT/%{python_sitelib}
+cp creation/lib/*.py $RPM_BUILD_ROOT%{python_sitelib}
 #install %{SOURCE4} $RPM_BUILD_ROOT%{_libdir}/python2.4/site-packages
 
 
@@ -160,7 +160,7 @@ for file in `ls tools/*.py`; do
    newname=`echo $file | sed -e 's/.*\/\(.*\)\.py/\1/'`
    cp $file $RPM_BUILD_ROOT%{_bindir}/$newname
 done
-cp tools/lib/*.py $RPM_BUILD_ROOT%{_libdir}/python%{py_ver}/site-packages
+cp tools/lib/*.py $RPM_BUILD_ROOT%{python_sitelib}
 
 %post
 # $1 = 1 - Installation
@@ -203,7 +203,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/*
 %attr(-, nobody, nobody) %{_datadir}/gwms-frontend
 %attr(-, nobody, nobody) %{_localstatedir}/log/gwms-frontend
-%{_libdir}/python2.4/site-packages/*
+%{python_sitelib}
 %{_initrddir}/frontend_startup
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/gwms-frontend.conf
 %config(noreplace) %{_sysconfdir}/condor/config.d/gwms-frontend.conf
@@ -211,6 +211,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 13 2011 Derek Weitzel  2.5.0-6
+- Made rpm noarch
+- Replaced python site-packages more auto-detectable
+
 * Mon Feb 09 2011 Derek Weitzel  2.5.0-5
 - Added the tools to bin directory
 
