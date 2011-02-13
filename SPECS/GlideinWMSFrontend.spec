@@ -7,7 +7,7 @@ Group:          System Environment/Daemons
 License:        Fermitools Software Legal Information (Modified BSD License)
 URL:            http://www.uscms.org/SoftwareComputing/Grid/WMS/glideinWMS/doc.v2/manual/
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
+BuildArch:      noarch
 #BuildRequires:  
 #Requires:       
 #BuildArchitectures: noarch 
@@ -60,6 +60,14 @@ rm -rf $RPM_BUILD_ROOT
 
 # Set the Python version
 %define py_ver %(python -c "import sys; v=sys.version_info[:2]; print '%d.%d'%v")
+
+# From http://fedoraproject.org/wiki/Packaging:Python#Files_to_include
+# Define python_sitelib
+%if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%endif
+
 
 # Apply the patches
 patch -p0 < %{SOURCE5}
