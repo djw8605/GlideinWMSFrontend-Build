@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.0
-Release:        6
+Release:        7
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -43,7 +43,11 @@ Requires(post): /sbin/chkconfig
 
 
 %description
-The purpose of the glideinWMS is to provide a simple way to access the Grid resources. GlideinWMS is a Glidein Based WMS (Workload Management System) that works on top of Condor. For those familiar with the Condor system, it is used for scheduling and job control. 
+The purpose of the glideinWMS is to provide a simple way 
+to access the Grid resources. GlideinWMS is a Glidein 
+Based WMS (Workload Management System) that works on top of 
+Condor. For those familiar with the Condor system, it is used 
+for scheduling and job control. 
 
 
 
