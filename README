@@ -1,0 +1,5 @@
+
+To Build:
+rpmbuild --define "_sourcedir $PWD/SOURCES" -ba SPECS/GlideinWMSFrontend.spec
+
+

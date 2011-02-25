@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.0
-Release:        7
+Release:        8
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -13,6 +13,8 @@ BuildArch:      noarch
 #BuildArchitectures: noarch 
 
 
+
+#Source0:        http://www.uscms.org/SoftwareComputing/Grid/WMS/glideinWMS/glideinWMS_v2_5_frontend.tgz
 Source0:        GlideinWMSFrontend-2.5.0.tar.gz
 # How to build tar file
 # cvs -d :pserver:anonymous@cdcvs.fnal.gov:/cvs/cd_read_only co -r v2_5 glideinWMS
@@ -24,9 +26,9 @@ Source1:        frontend_startup
 Source2:        frontend.xml
 Source3:        gwms-frontend.conf.httpd
 #Source4:        cvWParamDict.py
-Source5:        reconfig_frontend.patch
-Source6:        cvWParamDict.py.patch
-Source7:        condor_config.local
+Source4:        condor_config.local
+patch0:         reconfig_frontend.patch
+patch1:        cvWParamDict.py.patch
 
 Requires: httpd
 #Requires: condor
@@ -53,6 +55,9 @@ for scheduling and job control.
 
 %prep
 %setup -q
+# Apply the patches
+%patch -P 0
+%patch -P 1 -R -p3 
 
 
 %build
@@ -74,8 +79,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 # Apply the patches
-patch -p0 < %{SOURCE5}
-patch -R -p3 < %{SOURCE6}
+#%patch -P 0
+#%patch -P 1 -p3 
 
 # install the executables
 install -d $RPM_BUILD_ROOT%{_sbindir}
@@ -155,7 +160,7 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSF
 
 # Install condor stuff
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d
-install -m 0644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d/gwms-frontend.conf
+install -m 0644 %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d/gwms-frontend.conf
 
 # Install tools
 install -d $RPM_BUILD_ROOT%{_bindir}
