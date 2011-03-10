@@ -1,56 +1,56 @@
---- /usr/lib64/python2.4/site-packages/cvWParamDict.py	2010-06-10 13:33:40.000000000 -0500
-+++ ../BUILD/GlideinWMSFrontend-2.4/creation/lib/cvWParamDict.py	2010-04-07 11:42:00.000000000 -0500
-@@ -43,12 +43,12 @@
+--- /usr/lib64/python2.4/site-packages/cvWParamDict.py	2011-03-09 21:39:09.000000000 -0600
++++ creation/lib/cvWParamDict.py	2010-09-08 15:19:27.000000000 -0500
+@@ -48,12 +48,12 @@
          
          # follow by the blacklist file
          file_name=cWConsts.BLACKLIST_FILE
--        self.dicts['preentry_file_list'].add_from_file(file_name,(file_name,"nocache","TRUE",'BLACKLIST_FILE'),os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name,file_name))
+-        self.dicts['preentry_file_list'].add_from_file(file_name,(file_name,"nocache","TRUE",'BLACKLIST_FILE'),os.path.join(params.work.base_dir, file_name))
 +        self.dicts['preentry_file_list'].add_from_file(file_name,(file_name,"nocache","TRUE",'BLACKLIST_FILE'),os.path.join(params.src_dir,file_name))
  
          # Load initial system scripts
          # These should be executed before the other scripts
          for script_name in ('cat_consts.sh',"check_blacklist.sh"):
--            self.dicts['preentry_file_list'].add_from_file(script_name,(cWConsts.insert_timestr(script_name),'exec','TRUE','FALSE'),os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name,script_name))
+-            self.dicts['preentry_file_list'].add_from_file(script_name,(cWConsts.insert_timestr(script_name),'exec','TRUE','FALSE'),os.path.join(params.work.base_dir, script_name))
 +            self.dicts['preentry_file_list'].add_from_file(script_name,(cWConsts.insert_timestr(script_name),'exec','TRUE','FALSE'),os.path.join(params.src_dir,script_name))
  
          # put user files in stage
          for file in params.files:
-@@ -70,9 +70,8 @@
+@@ -75,9 +75,8 @@
          populate_common_descript(self.dicts['frontend_descript'],params)
  
          # populate the monitor files
 -        #javascriptrrd_dir=os.path.join(params.monitor.javascriptRRD_dir,'src/lib')
 -        javascriptrrd_dir = params.monitor.javascriptRRD_dir
--        for mfarr in ((os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name),'frontend_support.js'),
+-        for mfarr in ((params.work.base_dir, 'frontend_support.js'),
 +        javascriptrrd_dir=os.path.join(params.monitor.javascriptRRD_dir,'src/lib')
 +        for mfarr in ((params.src_dir,'frontend_support.js'),
                        (javascriptrrd_dir,'rrdFlot.js'),
                        (javascriptrrd_dir,'rrdFlotMatrix.js'),
                        (javascriptrrd_dir,'rrdFlotSupport.js'),
-@@ -88,9 +87,9 @@
+@@ -93,9 +92,9 @@
              mfobj.load()
              self.monitor_jslibs.append(mfobj)
  
--        for mfarr in ((os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name),'frontendRRDBrowse.html'),
--                      (os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name),'frontendRRDGroupMatrix.html'),
--                      (os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name),'frontendStatus.html')):
+-        for mfarr in ((params.work.base_dir,'frontendRRDBrowse.html'),
+-                      (params.work.base_dir,'frontendRRDGroupMatrix.html'),
+-                      (params.work.base_dir,'frontendStatus.html')):
 +        for mfarr in ((params.src_dir,'frontendRRDBrowse.html'),
 +                      (params.src_dir,'frontendRRDGroupMatrix.html'),
 +                      (params.src_dir,'frontendStatus.html')):
              mfdir,mfname=mfarr
              mfobj=cWDictFile.SimpleFile(mfdir,mfname)
              mfobj.load()
-@@ -162,12 +161,12 @@
+@@ -167,12 +166,12 @@
  
          # follow by the blacklist file
          file_name=cWConsts.BLACKLIST_FILE
--        self.dicts['preentry_file_list'].add_from_file(file_name,(file_name,"nocache","TRUE",'BLACKLIST_FILE'),os.path.join(os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name),file_name))
+-        self.dicts['preentry_file_list'].add_from_file(file_name,(file_name,"nocache","TRUE",'BLACKLIST_FILE'),os.path.join(params.work.base_dir,file_name))
 +        self.dicts['preentry_file_list'].add_from_file(file_name,(file_name,"nocache","TRUE",'BLACKLIST_FILE'),os.path.join(params.src_dir,file_name))
  
          # Load initial system scripts
          # These should be executed before the other scripts
          for script_name in ('cat_consts.sh',"check_blacklist.sh"):
--            self.dicts['preentry_file_list'].add_from_file(script_name,(cWConsts.insert_timestr(script_name),'exec','TRUE','FALSE'),os.path.join(os.path.join(params.work.base_dir, "frontend_%s" % params.frontend_name),script_name))
+-            self.dicts['preentry_file_list'].add_from_file(script_name,(cWConsts.insert_timestr(script_name),'exec','TRUE','FALSE'),os.path.join(params.work.base_dir ,script_name))
 +            self.dicts['preentry_file_list'].add_from_file(script_name,(cWConsts.insert_timestr(script_name),'exec','TRUE','FALSE'),os.path.join(params.src_dir,script_name))
  
          # put user files in stage

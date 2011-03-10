@@ -18,7 +18,7 @@ frontend_dir='/usr/share/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend'
 glideinWMS_dir=$frontend_dir
 
 #frontend_name=`awk '/^FrontendName /{print $2}' $frontend_dir/frontend.descript`
-frontend_name='OSG_gWMSFrontend'
+frontend_name='FRONTEND_NAME_CHANGME'
 id_str="$frontend_name"
 
 start() {

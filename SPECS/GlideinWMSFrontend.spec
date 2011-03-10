@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.0
-Release:        8
+Release:        10
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -57,7 +57,7 @@ for scheduling and job control.
 %setup -q
 # Apply the patches
 %patch -P 0
-%patch -P 1 -R -p3 
+%patch -P 1 -R -p0
 
 
 %build
@@ -176,6 +176,15 @@ cp tools/lib/*.py $RPM_BUILD_ROOT%{python_sitelib}
 # $1 = 2 - Upgrade
 # Source: http://www.ibm.com/developerworks/library/l-rpm2/
 
+fqdn_hostname=`hostname -f`
+frontend_name=`echo $fqdn_hostname | sed 's/\./-/g'`_OSG_gWMSFrontend
+
+
+sed -i 's/FRONTEND_NAME_CHANGEME/$frontend_name/g' %{_sysconfdir}/gwms-frontend/frontend.xml
+sed -i 's/FRONTEND_NAME_CHANGEME/$frontend_name/g' %{_initrddir}/frontend_startup
+
+mv %{_datadir}/gwms-frontend/www/stage/frontend_OSG_gWMSFrontend %{_datadir}/gwms-frontend/www/stage/$frontend_name
+
 /sbin/chkconfig --add frontend_startup
 ln -s %{_sysconfdir}/gwms-frontend/frontend.xml %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/frontend.xml
 ln -s %{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/monitor
@@ -220,6 +229,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 13 2011 Derek Weitzel  2.5.0-9
+- Made the work, stage, monitor, and log directory independent of the frontend name.
+- Frontend name is now generated at install time
+
 * Mon Feb 13 2011 Derek Weitzel  2.5.0-6
 - Made rpm noarch
 - Replaced python site-packages more auto-detectable
