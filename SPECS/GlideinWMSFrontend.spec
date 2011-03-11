@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
-Version:        2.5.0
-Release:        11
+Version:        2.5.1
+Release:        2
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -15,7 +15,7 @@ BuildArch:      noarch
 
 
 #Source0:        http://www.uscms.org/SoftwareComputing/Grid/WMS/glideinWMS/glideinWMS_v2_5_frontend.tgz
-Source0:        GlideinWMSFrontend-2.5.0.tar.gz
+Source0:        GlideinWMSFrontend-2.5.1.tar.gz
 # How to build tar file
 # cvs -d :pserver:anonymous@cdcvs.fnal.gov:/cvs/cd_read_only co -r v2_5 glideinWMS
 # mv glideinWMS GlideinWMSFrontend-2.5.0
@@ -28,7 +28,8 @@ Source3:        gwms-frontend.conf.httpd
 #Source4:        cvWParamDict.py
 Source4:        condor_config.local
 patch0:         reconfig_frontend.patch
-patch1:        cvWParamDict.py.patch
+patch1:         cvWParamDict.py.patch
+patch2: 	cvWParams.py.patch
 
 Requires: httpd
 #Requires: condor
@@ -58,7 +59,7 @@ for scheduling and job control.
 # Apply the patches
 %patch -P 0
 %patch -P 1 -R -p0
-
+%patch -P 2 -p1
 
 %build
 #make %{?_smp_mflags}
@@ -108,43 +109,43 @@ install -m 0755 %{SOURCE1} $RPM_BUILD_ROOT/%{_initrddir}/frontend_startup
 
 # Install the web directory
 install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/
 install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/stage/
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/stage/frontend_OSG_gWMSFrontend/group_main
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/stage/group_main
 
 # Bunch of Monitoring stuff
-install -m 644 creation/web_base/frontendRRDBrowse.html $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/frontendRRDBrowse.html
-install -m 644 creation/web_base/frontendRRDGroupMatrix.html $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/frontendRRDGroupMatrix.html  
-install -m 644 creation/web_base/frontendStatus.html $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/frontendStatus.html 
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/lock
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/jslibs
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/total
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/group_main
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/group_main/lock
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/group_main/total
+install -m 644 creation/web_base/frontendRRDBrowse.html $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontendRRDBrowse.html
+install -m 644 creation/web_base/frontendRRDGroupMatrix.html $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontendRRDGroupMatrix.html  
+install -m 644 creation/web_base/frontendStatus.html $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/frontendStatus.html 
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/lock
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/jslibs
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/total
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/group_main
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/group_main/lock
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/monitor/group_main/total
 
 # staging stuff
-install -m 644 creation/web_base/nodes.blacklist $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/stage/frontend_OSG_gWMSFrontend/nodes.blacklist
-install -m 644 creation/web_base/nodes.blacklist $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/stage/frontend_OSG_gWMSFrontend/group_main/nodes.blacklist
+install -m 644 creation/web_base/nodes.blacklist $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/stage/nodes.blacklist
+install -m 644 creation/web_base/nodes.blacklist $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/www/stage/group_main/nodes.blacklist
 
 # Httpd configuration changes
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 install -m 0644 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/gwms-frontend.conf
 
 # Install the logs
-install -d $RPM_BUILD_ROOT%{_localstatedir}/log/gwms-frontend/frontend_OSG_gWMSFrontend/frontend
-install -d $RPM_BUILD_ROOT%{_localstatedir}/log/gwms-frontend/frontend_OSG_gWMSFrontend/group_main
+install -d $RPM_BUILD_ROOT%{_localstatedir}/log/gwms-frontend/frontend
+install -d $RPM_BUILD_ROOT%{_localstatedir}/log/gwms-frontend/group_main
 
 
 # Install frontend temp dir, for all the frontend.xml.<checksum>
 install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/lock
-#install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/monitor
-#install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/monitor/group_main
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/group_main
-install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/group_main/lock
-#install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/group_main/monitor
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/lock
+#install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/monitor
+#install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/monitor/group_main
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/group_main
+install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/group_main/lock
+#install -d $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/group_main/monitor
 
 
 # Install the frontend config dir
@@ -152,8 +153,8 @@ install -d $RPM_BUILD_ROOT/%{_sysconfdir}/gwms-frontend
 install -m 0644 %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/gwms-frontend/frontend.xml
 
 # Install the silly stuff, should be fixed in glideinWMS
-cp -r creation/web_base/* $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/
-rm -rf $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/CVS
+cp -r creation/web_base/* $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/
+rm -rf $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/CVS
 
 # Make user frontend?
 
@@ -183,12 +184,12 @@ frontend_name=`echo $fqdn_hostname | sed 's/\./-/g'`_OSG_gWMSFrontend
 sed -i 's/FRONTEND_NAME_CHANGEME/$frontend_name/g' %{_sysconfdir}/gwms-frontend/frontend.xml
 sed -i 's/FRONTEND_NAME_CHANGEME/$frontend_name/g' %{_initrddir}/frontend_startup
 
-mv %{_datadir}/gwms-frontend/www/stage/frontend_OSG_gWMSFrontend %{_datadir}/gwms-frontend/www/stage/$frontend_name
+#mv %{_datadir}/gwms-frontend/www/stage/ %{_datadir}/gwms-frontend/www/stage/$frontend_name
 
 /sbin/chkconfig --add frontend_startup
-ln -s %{_sysconfdir}/gwms-frontend/frontend.xml %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/frontend.xml
-ln -s %{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/monitor
-ln -s %{_datadir}/gwms-frontend/www/monitor/frontend_OSG_gWMSFrontend/group_main %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/group_main/monitor
+ln -s %{_sysconfdir}/gwms-frontend/frontend.xml %{_datadir}/gwms-frontend/frontend-temp/frontend.xml
+ln -s %{_datadir}/gwms-frontend/www/monitor/ %{_datadir}/gwms-frontend/frontend-temp/monitor
+ln -s %{_datadir}/gwms-frontend/www/monitor/group_main %{_datadir}/gwms-frontend/frontend-temp/group_main/monitor
 
 
 %preun
@@ -202,9 +203,9 @@ fi
 
 if [ "$1" = "0" ]; then
     # Remove the symlinks
-    rm -f %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/frontend.xml
-    rm -f %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/monitor
-    rm -f %{_datadir}/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend/group_main/monitor
+    rm -f %{_datadir}/gwms-frontend/frontend-temp/frontend.xml
+    rm -f %{_datadir}/gwms-frontend/frontend-temp/monitor
+    rm -f %{_datadir}/gwms-frontend/frontend-temp/group_main/monitor
 
     # A lot of files are generated, but rpm won't delete those
 #    rm -rf %{_datadir}/gwms-frontend
@@ -229,6 +230,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Mar 11 2011 Burt Holzman 	 2.5.1-1
+- Include glideinWMS 2.5.1
+- Made all the directories independent of the frontend name
+
 * Mon Mar 10 2011 Derek Weitzel  2.5.0-11
 - Changed the frontend.xml to correct the web stage directory
 
