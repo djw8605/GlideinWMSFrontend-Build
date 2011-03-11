@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.0
-Release:        10
+Release:        11
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -229,7 +229,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Mon Feb 13 2011 Derek Weitzel  2.5.0-9
+* Mon Mar 10 2011 Derek Weitzel  2.5.0-11
+- Changed the frontend.xml to correct the web stage directory
+
+* Mon Mar 10 2011 Derek Weitzel  2.5.0-9
 - Made the work, stage, monitor, and log directory independent of the frontend name.
 - Frontend name is now generated at install time
 

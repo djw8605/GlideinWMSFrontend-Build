@@ -24,7 +24,7 @@
          <proxy absfname="/tmp/x509up_u99" security_class="frontend"/>
       </proxies>
    </security>
-   <stage base_dir="/usr/share/gwms-frontend/www/stage/frontend_FRONTEND_NAME_CHANGME" use_symlink="True" web_base_url="http://<hostname of frontend>/vofrontend/stage"/>
+   <stage base_dir="/usr/share/gwms-frontend/www/stage/frontend_FRONTEND_NAME_CHANGME" use_symlink="True" web_base_url="http://<hostname of frontend>/vofrontend/stage/forntend_FRONTEND_NAME_CHANGME"/>
    <work base_dir="/usr/share/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend" base_log_dir="/var/log/gwms-frontend/frontend_OSG_gWMSFrontend"/>
    <attrs>
       <attr name="GLIDEIN_Entry_Rank" glidein_publish="True" job_publish="True" parameter="True" type="string" value="1"/>
