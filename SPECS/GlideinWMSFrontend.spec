@@ -181,8 +181,8 @@ fqdn_hostname=`hostname -f`
 frontend_name=`echo $fqdn_hostname | sed 's/\./-/g'`_OSG_gWMSFrontend
 
 
-sed -i 's/FRONTEND_NAME_CHANGEME/$frontend_name/g' %{_sysconfdir}/gwms-frontend/frontend.xml
-sed -i 's/FRONTEND_NAME_CHANGEME/$frontend_name/g' %{_initrddir}/frontend_startup
+sed -i "s/FRONTEND_NAME_CHANGEME/$frontend_name/g" %{_sysconfdir}/gwms-frontend/frontend.xml
+sed -i "s/FRONTEND_NAME_CHANGEME/$frontend_name/g" %{_initrddir}/frontend_startup
 
 #mv %{_datadir}/gwms-frontend/www/stage/ %{_datadir}/gwms-frontend/www/stage/$frontend_name
 
