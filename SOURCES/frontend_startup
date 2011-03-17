@@ -14,11 +14,11 @@ failure() {
  return 1
 }
 
-frontend_dir='/usr/share/gwms-frontend/frontend-temp/frontend_OSG_gWMSFrontend'
+frontend_dir='/usr/share/gwms-frontend/frontend-temp'
 glideinWMS_dir=$frontend_dir
 
 #frontend_name=`awk '/^FrontendName /{print $2}' $frontend_dir/frontend.descript`
-frontend_name='FRONTEND_NAME_CHANGME'
+frontend_name='FRONTEND_NAME_CHANGEME'
 id_str="$frontend_name"
 
 start() {
