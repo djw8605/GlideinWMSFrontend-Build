@@ -1,6 +1,6 @@
 Name:           GlideinWMSFrontend
 Version:        2.5.1
-Release:        6
+Release:        9
 Summary:        The VOFrontend for glideinWMS submission host
 
 Group:          System Environment/Daemons
@@ -26,7 +26,8 @@ Source1:        frontend_startup
 Source2:        frontend.xml
 Source3:        gwms-frontend.conf.httpd
 #Source4:        cvWParamDict.py
-Source4:        condor_config.local
+Source4:        00_frontend.config
+Source5:        01_collectors.config
 patch0:         reconfig_frontend.patch
 patch1:         cvWParamDict.py.patch
 patch2: 	cvWParams.py.patch
@@ -161,7 +162,10 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/gwms-frontend/frontend-temp/CVS
 
 # Install condor stuff
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d
-install -m 0644 %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d/gwms-frontend.conf
+install -m 0644 %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d/00_frontend.config
+install -m 0644 %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/condor/config.d/01_collectors.config
+
+
 
 # Install tools
 install -d $RPM_BUILD_ROOT%{_bindir}
@@ -225,11 +229,16 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}
 %{_initrddir}/frontend_startup
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/gwms-frontend.conf
-%config(noreplace) %{_sysconfdir}/condor/config.d/gwms-frontend.conf
+%config(noreplace) %{_sysconfdir}/condor/config.d/00_frontend.config
+%config(noreplace) %{_sysconfdir}/condor/config.d/01_collectors.config
 %config(noreplace) %{_sysconfdir}/gwms-frontend/frontend.xml
 
 
 %changelog
+* Tue Mar 22 2011 Derek Weitzel 2.5.1-8
+- Change condor config file name to 00_frontend.config
+- Separated definition of collectors into 01_collectors.config
+
 * Fri Mar 11 2011 Burt Holzman 	 2.5.1-1
 - Include glideinWMS 2.5.1
 - Made all the directories independent of the frontend name
